@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jan 21, 2018 2:00:59 AM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="beans.Festival" table="festival" catalog="festivali" optimistic-lock="version">
+        <id name="idFestival" type="java.lang.Integer">
+            <column name="IdFestival" />
+            <generator class="identity" />
+        </id>
+        <property name="naziv" type="string">
+            <column name="Naziv" length="50" />
+        </property>
+        <property name="mesto" type="string">
+            <column name="Mesto" length="20" />
+        </property>
+        <property name="statusFestival" type="string">
+            <column name="StatusFestival" length="20" />
+        </property>
+        <property name="datumPocetka" type="timestamp">
+            <column name="DatumPocetka" length="19" />
+        </property>
+        <property name="datumKraja" type="timestamp">
+            <column name="DatumKraja" length="19" />
+        </property>
+        <property name="cena" type="big_decimal">
+            <column name="Cena" precision="10" />
+        </property>
+        <property name="kratakOpis" type="string">
+            <column name="KratakOpis" length="65535" />
+        </property>
+    </class>
+</hibernate-mapping>

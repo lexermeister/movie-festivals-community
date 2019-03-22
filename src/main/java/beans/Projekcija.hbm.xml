@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jan 21, 2018 2:00:59 AM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="beans.Projekcija" table="projekcija" catalog="festivali" optimistic-lock="version">
+        <id name="idProjekcija" type="java.lang.Integer">
+            <column name="IdProjekcija" />
+            <generator class="identity" />
+        </id>
+        <property name="mesto" type="string">
+            <column name="Mesto" length="20" />
+        </property>
+        <property name="satnica" type="string">
+            <column name="Satnica" length="20" />
+        </property>
+        <property name="sala" type="string">
+            <column name="Sala" length="20" />
+        </property>
+        <property name="datum" type="timestamp">
+            <column name="Datum" length="19" />
+        </property>
+        <property name="cena" type="java.lang.Integer">
+            <column name="Cena" length="19" />
+        </property>
+        <property name="idFilm" type="java.lang.Integer">
+            <column name="IdFilm" />
+        </property>
+    </class>
+</hibernate-mapping>

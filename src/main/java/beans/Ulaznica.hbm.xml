@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jan 21, 2018 2:00:59 AM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="beans.Ulaznica" table="ulaznica" catalog="festivali" optimistic-lock="version">
+        <id name="idUlaznica" type="java.lang.Integer">
+            <column name="IdUlaznica" />
+            <generator class="identity" />
+        </id>
+        <property name="statusUlaznice" type="string">
+            <column name="StatusUlaznice" length="20" />
+        </property>
+        <property name="idKorisnik" type="java.lang.Integer">
+            <column name="IdKorisnik" />
+        </property>
+        <property name="idProjekcija" type="java.lang.Integer">
+            <column name="IdProjekcija" />
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,239 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+
+        <!--		 Loading third party fonts -->
+        <link href="http://fonts.googleapis.com/css?family=Roboto:300,400,700|" rel="stylesheet" type="text/css"/>
+        <link href="fonts/font-awesome.min.css" rel="stylesheet" type="text/css"/><!--
+
+         Loading main css file 
+        -->		<link rel="stylesheet" href="style.css"/>
+    </h:head>
+    <h:body>
+        <div id="site-content">
+            <header class="site-header">
+                <div class="container">
+                    <a href="index.html" id="branding">
+                        <h:graphicImage value="resources/images/logo.png" alt="" class="logo"/>
+                        <div class="logo-copy">
+                            <h1 class="site-title">Movie festival community</h1>
+                            <small class="site-description">Nadji svoj festival!</small>
+                        </div>
+                    </a> <!-- #branding -->
+
+                    <h:form>
+                        <div class="main-navigation">
+                            <button type="button" class="menu-toggle"><i class="fa fa-bars"></i></button>
+                            <ul class="menu">
+                                <li class="menu-item current-menu-item"><h:commandLink action="admin">Početna</h:commandLink></li>
+                                <li class="menu-item"><h:commandLink action="about">About</h:commandLink></li>
+                                <li class="menu-item"><h:commandLink action="odobravanjeZahteva">Odobravanje zahteva</h:commandLink></li>
+                                <li class="menu-item"><a href="joinus.html">Join us</a></li>
+                                <li class="menu-item"><h:commandLink action="#{controller.logout()}">Odjava</h:commandLink></li>
+                            </ul> <!-- .menu -->
+                        </div>
+                    </h:form>
+
+                    <div class="mobile-navigation"></div>
+                </div>
+            </header>
+            <main class="main-content">
+                <div class="container">
+                    <div class="page">
+                        <h2 class="section-title" style="color: red">#{controller.porukaDodavanje}</h2>
+                        <h2 class="section-title">Unos novog festivala:</h2>
+                        <h:form id="unosfestivala">
+
+                            <p:wizard flowListener="#{controller.onFlowProcess}">
+                                <p:tab id="step1" title="Festival">
+                                    <p:panel header="Osnovni podaci o festivalu:">
+                                        <h:panelGrid columns="2" border="0">
+                                            <p:outputLabel value="Naziv festivala:"/>
+                                            <p:inputText value="#{controller.noviFestival.naziv}"/>
+
+                                            <p:outputLabel value="Cena:"/>
+                                            <p:inputText value="#{controller.noviFestival.cena}"/>
+
+                                            <p:outputLabel value="Mesto održavanja:"/>
+                                            <p:selectOneMenu value="#{controller.noviFestival.mesto}">
+                                                <f:selectItems value="#{controller.dohvatiSvaMesta()}" var="m" itemLabel="#{m.nazivMesta}" itemValue="#{m.nazivMesta}"/>
+                                            </p:selectOneMenu>
+
+                                            <p:outputLabel value="Datum početka:"/>
+                                            <p:calendar value="#{controller.noviFestival.datumPocetka}"/>
+
+                                            <p:outputLabel value="Datum zatvaranja:"/>
+                                            <p:calendar value="#{controller.noviFestival.datumKraja}"/>
+
+                                            <p:outputLabel value="Kratak opis:"/>
+                                            <p:inputTextarea value="#{controller.noviFestival.kratakOpis}"/>
+                                        </h:panelGrid>
+                                    </p:panel>
+                                </p:tab>
+
+                                <p:tab id="step2" title="Projekcije">
+                                    <p:panel header="Unos projekcija:">
+                                        <p:outputLabel value="#{controller.porukaDodavanjeProjekcije}" style="color: red" />
+                                        <h:panelGrid columns="2" border="0">
+                                            <p:outputLabel value="Naziv filma:"/>
+                                            <p:selectOneMenu value="#{controller.novaProjekcija.idFilm}">
+                                                <f:selectItems value="#{controller.dohvatiSveFilmove()}" var="f" itemLabel="#{f.naziv}" itemValue="#{f.idFilm}"/>
+                                            </p:selectOneMenu>
+
+                                            <p:outputLabel value="Cena ulaznice:"/>
+                                            <p:inputText value="#{controller.novaProjekcija.cena}"/>
+
+                                            <p:outputLabel value="Mesto održavanja:"/>
+                                            <h:selectOneMenu value="#{controller.novaProjekcija.mesto}">
+                                                <f:selectItems value="#{controller.dohvatiMestaZaFestival()}" var="mesto" itemLabel="#{mesto.lokacija}" itemValue="#{mesto.nazivMesta}"/>
+                                            </h:selectOneMenu>  
+
+                                            <p:outputLabel value="Sala:"/>
+                                            <h:selectOneMenu value="#{controller.novaProjekcija.sala}">
+                                                <f:selectItems value="#{controller.dohvatiSaleZaMesto(controller.novaProjekcija.mesto)}" var="sala" itemLabel="#{sala.naziv}" itemValue="#{sala.naziv}"/>
+                                            </h:selectOneMenu>
+
+                                            <p:outputLabel value="Datum održavanja:"/>
+                                            <p:calendar value="#{controller.novaProjekcija.datum}"/>
+
+                                            <p:outputLabel value="Satnica:"/>
+                                            <p:inputMask mask="99:99" value="#{controller.novaProjekcija.satnica}"/>
+                                        </h:panelGrid>
+                                        <p:commandButton update="unosfestivala" value="DODAJ PROJEKCIJU" action="#{controller.dodajProjekciju()}" ajax="false"/>
+                                        <p:commandButton update=":rezDlg" type="button" value="DODAJ FILM" onclick="PF('dlg').show();" ajax="true"/>
+                                    </p:panel>
+                                    
+                                </p:tab>
+
+                                <p:tab id="step3" title="Izgled">
+                                    <p:panel header="Pregled novog festivala:">
+                                        <h:panelGrid columns="2" border="0">
+                                            <p:outputLabel value="Naziv festivala:"/>
+                                            <p:outputLabel value="#{controller.noviFestival.naziv}"/>
+
+                                            <p:outputLabel value="Mesto održavanja:"/>
+                                            <p:outputLabel value="#{controller.noviFestival.mesto}"/>
+
+                                            <p:outputLabel value="Datum početka:"/>
+                                            <p:outputLabel value="#{controller.noviFestival.datumPocetkaLepo}"/>
+
+                                            <p:outputLabel value="Datum zatvaranja:"/>
+                                            <p:outputLabel value="#{controller.noviFestival.datumKrajaLepo}"/>
+
+                                            <p:outputLabel value="Kratak opis:"/>
+                                            <p:outputLabel value="#{controller.noviFestival.kratakOpis}"/>
+
+                                            <p:outputLabel value="Projekcije:"/>
+                                            <p:outputLabel value="#{controller.ispisiProjekcije()}"/>
+                                        </h:panelGrid>
+                                    </p:panel><br/>
+                                    <p:commandButton update="unosfestivala" value="POTVRDI UNOS FESTIVALA" action="#{controller.dodajNoviFestival()}" ajax="false"/>
+                                </p:tab>
+                            </p:wizard>
+                        </h:form>
+                        <p:dialog id="rezDlg" header="Unos novog filma" widgetVar="dlg" modal="true" height="400" width="400">
+                                        <h:form id="unosFilma" enctype="multipart/form-data">
+                                            <h:panelGrid columns="2">
+                                                <p:outputLabel value="Naziv filma:"/>
+                                                <p:inputText value="#{controller.noviFilm.naziv}"/>
+
+                                                <p:outputLabel value="Originalni naziv: "/>
+                                                <p:inputText value="#{controller.noviFilm.originalniNaziv}"/>
+
+                                                <p:outputLabel value="Slika: "/>
+                                                <p:fileUpload fileUploadListener="#{controller.handleFileUpload}" id="slika" allowTypes="/(\.|\/)(gif|jpe?g|png)$/"/>
+
+                                                <p:outputLabel value="Reziser: "/>
+                                                <p:inputText value="#{controller.noviFilm.reziser}" />
+
+                                                <p:outputLabel value="Godina: "/>
+                                                <p:inputText value="#{controller.noviFilm.godina}"/>
+
+                                                <p:outputLabel value="Glavni glumci: "/>
+                                                <p:inputText value="#{controller.noviFilm.glavniGlumci}"/>
+                                                
+                                                <p:outputLabel value="Trajanje: "/>
+                                                <p:inputText value="#{controller.noviFilm.trajanje}"/>
+                                                
+                                                <p:outputLabel value="Zemlja porekla: "/>
+                                                <p:inputText value="#{controller.noviFilm.zemljaPorekla}"/>
+                                                
+                                                <p:outputLabel value="IMDB link: "/>
+                                                <p:inputText value="#{controller.noviFilm.linkImdb}"/>
+                                                
+                                                <p:outputLabel value="Rotten link: "/>
+                                                <p:inputText value="#{controller.noviFilm.linkRotten}"/>
+                                                
+                                                <p:outputLabel value="Youtube trailer: "/>
+                                                <p:inputText value="#{controller.noviFilm.linkTrailer}"/>
+                                                
+                                                <br/><br/>
+                                                <p:commandButton type="submit" value="POTVRDI" action="#{controller.dodajNoviFilm()}" ajax="false"/>
+                                            </h:panelGrid>
+                                        </h:form>    
+                                    </p:dialog>
+                    </div>
+
+                </div>
+            </main>
+
+            <footer class="site-footer">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="widget">
+                                <h3 class="widget-title">About Us</h3>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quia tempore vitae mollitia nesciunt saepe cupiditate</p>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="widget">
+                                <h3 class="widget-title">Recent Review</h3>
+                                <ul class="no-bullet">
+                                    <li><a href="#">Lorem ipsum dolor</a></li>
+                                    <li><a href="#">Sit amet consecture</a></li>
+                                    <li><a href="#">Dolorem respequem</a></li>
+                                    <li><a href="#">Invenore veritae</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="widget">
+                                <h3 class="widget-title">Social Media</h3>
+                                <ul class="no-bullet">
+                                    <li><a href="#">Facebook</a></li>
+                                    <li><a href="#">Twitter</a></li>
+                                    <li><a href="#">Google+</a></li>
+                                    <li><a href="#">Pinterest</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="widget">
+                                <h3 class="widget-title">Newsletter</h3>
+                                <form action="#" class="subscribe-form">
+                                    <input type="text" placeholder="Email Address"/>
+                                </form>
+                            </div>
+                        </div>
+                    </div> <!-- .row -->
+
+                    <div class="colophon">Copyright 2018 Filmski festivali, Projekat iz predmeta Programiranje internet aplikacija, Aleksa Lazarevic, ETF Beograd</div>
+                </div> <!-- .container -->
+
+            </footer>
+        </div>
+        <!-- Default snippet for navigation -->
+
+
+        <!--<script src="resources/js/jquery-1.11.1.min.js"></script>-->
+        <!--<script src="resources/js/plugins.js"></script>-->
+        <!--<script src="resources/js/app.js"></script>-->
+    </h:body>
+</html>
+

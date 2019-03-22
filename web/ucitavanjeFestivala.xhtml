@@ -1,0 +1,198 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+
+        <!--		 Loading third party fonts -->
+        <link href="http://fonts.googleapis.com/css?family=Roboto:300,400,700|" rel="stylesheet" type="text/css"/>
+        <link href="fonts/font-awesome.min.css" rel="stylesheet" type="text/css"/><!--
+
+         Loading main css file 
+        -->		<link rel="stylesheet" href="style.css"/>
+    </h:head>
+    <h:body>
+        <div id="site-content">
+            <header class="site-header">
+                <div class="container">
+                    <a href="index.html" id="branding">
+                        <h:graphicImage value="resources/images/logo.png" alt="" class="logo"/>
+                        <div class="logo-copy">
+                            <h1 class="site-title">Movie festival community</h1>
+                            <small class="site-description">Nadji svoj festival!</small>
+                        </div>
+                    </a> <!-- #branding -->
+
+                    <h:form>
+                        <div class="main-navigation">
+                            <button type="button" class="menu-toggle"><i class="fa fa-bars"></i></button>
+                            <ul class="menu">
+                                <li class="menu-item current-menu-item"><h:commandLink action="admin">Početna</h:commandLink></li>
+                                <li class="menu-item"><h:commandLink action="about">About</h:commandLink></li>
+                                <li class="menu-item"><h:commandLink action="odobravanjeZahteva">Odobravanje zahteva</h:commandLink></li>
+                                <li class="menu-item"><a href="joinus.html">Join us</a></li>
+                                <li class="menu-item"><h:commandLink action="#{controller.logout()}">Odjava</h:commandLink></li>
+                            </ul> <!-- .menu -->
+                        </div>
+                    </h:form>
+
+                    <div class="mobile-navigation"></div>
+                </div>
+            </header>
+            <main class="main-content">
+                <div class="container">
+                    <div class="page">                        
+                        
+                        <h:form id="multimedija">
+                            <p:wizard flowListener="#{controller.onFlowProcess}">
+                                <p:tab id="step1" title="Festival">
+                                    <p:panel header="Učitaj festivale i mesta održavanja:">
+                                        <p:outputLabel style="color: red" value="#{controller.porukaParsiranje}"/><br/>
+                                        <h:commandButton value="UČITAJ FESTIVALE" action="#{controller.ucitajFestivale()}"/><br/><br/>
+                                        <h:commandButton value="UČITAJ FILMOVE" action="#{controller.ucitajFilmove()}"/>
+                                        
+                                        <br/><br/>
+                                    </p:panel>
+                                </p:tab>
+
+                                <p:tab id="step2" title="Multimedija">
+                                    <p:panel header="Unos multimedija:">
+                                            <p:dataTable value="#{controller.listaFilmova}" var="film">
+                                                <p:column headerText="Naziv filma">
+                                                    <h:outputText value="#{film.naziv}"/>
+                                                </p:column>
+
+                                                <p:column headerText="Slika poster">
+                                                    <p:fileUpload fileUploadListener="#{controller.handleFileUpload}" allowTypes="/(\.|\/)(gif|jpe?g|png)$/"/>
+                                                </p:column>
+
+                                                <p:column headerText="Slika poster">
+                                                    <p:fileUpload fileUploadListener="#{controller.handleFileUploadGalerija}" multiple="true" allowTypes="/(\.|\/)(gif|jpe?g|png)$/"/>
+                                                </p:column>
+                                                
+                                                <p:column headerText="Youtube trailer">
+                                                    <h:inputText value="#{film.linkTrailer}"/>
+                                                </p:column>
+
+                                                <p:column>
+                                                    <p:commandButton  value="UNESI" action="#{controller.ucitajMultimediju(film)}" ajax="false"/>
+                                                </p:column>
+                                            </p:dataTable>
+                                        
+                                    </p:panel>
+                                    
+                                </p:tab>
+
+                                <p:tab id="step3" title="Projekcije">
+                                    <p:panel header="Unos novih projekcija festivala:">
+                                        <p:outputLabel style="color: red" value="#{controller.porukaDodavanjeProjekcije1}"/>
+                                        <p:dataTable value="#{controller.listaFestivala.get(0)}" var="fest">
+                                                <p:column headerText="Naziv festivala">
+                                                    <h:outputText value="#{fest.naziv}"/>
+                                                </p:column>
+
+                                                <p:column headerText="Film">
+                                                    <p:selectOneMenu value="#{controller.novaProjekcija.idFilm}">
+                                                        <f:selectItems value="#{controller.dohvatiSveFilmove()}" var="f" itemLabel="#{f.naziv}" itemValue="#{f.idFilm}"/>
+                                                    </p:selectOneMenu>
+                                                </p:column>
+
+                                                <p:column headerText="Cena ulaznice">
+                                                    <p:inputText value="#{controller.novaProjekcija.cena}"/>
+                                                </p:column>
+                                                
+                                                <p:column headerText="Mesto održavanja">
+                                                    <h:selectOneMenu value="#{controller.novaProjekcija.mesto}">
+                                                        <f:selectItems value="#{controller.dohvatiMestaZaFestival(fest)}" var="mesto" itemLabel="#{mesto.lokacija}" itemValue="#{mesto.nazivMesta}"/>
+                                                    </h:selectOneMenu>
+                                                </p:column>
+                                                
+                                                <p:column headerText="Datum">
+                                                    <p:calendar value="#{controller.novaProjekcija.datum}"/>
+                                                </p:column>
+                                            
+                                                <p:column headerText="Satnica">
+                                                    <p:inputMask mask="99:99" value="#{controller.novaProjekcija.satnica}"/>
+                                                </p:column>
+                                            
+                                                <p:column>
+                                                    <p:commandButton  value="UNESI" action="#{controller.ucitajProjekciju(fest)}" ajax="false"/>
+                                                </p:column>
+                                            </p:dataTable>
+                                    </p:panel><br/>
+                                </p:tab>
+                            </p:wizard>
+                        </h:form>
+
+                        <br/><br/>
+<!--                        <h:form>
+                            <p:steps>
+                                <p:menuitem value="Personal"/>
+                                <p:menuitem value="Seat Selection" />
+                                <p:menuitem value="Payment" />
+                                <p:menuitem value="Confirmation" />
+                            </p:steps>
+                        </h:form>-->
+                    </div>
+
+                </div>
+            </main>
+
+            <footer class="site-footer">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="widget">
+                                <h3 class="widget-title">About Us</h3>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quia tempore vitae mollitia nesciunt saepe cupiditate</p>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="widget">
+                                <h3 class="widget-title">Recent Review</h3>
+                                <ul class="no-bullet">
+                                    <li><a href="#">Lorem ipsum dolor</a></li>
+                                    <li><a href="#">Sit amet consecture</a></li>
+                                    <li><a href="#">Dolorem respequem</a></li>
+                                    <li><a href="#">Invenore veritae</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="widget">
+                                <h3 class="widget-title">Social Media</h3>
+                                <ul class="no-bullet">
+                                    <li><a href="#">Facebook</a></li>
+                                    <li><a href="#">Twitter</a></li>
+                                    <li><a href="#">Google+</a></li>
+                                    <li><a href="#">Pinterest</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="widget">
+                                <h3 class="widget-title">Newsletter</h3>
+                                <form action="#" class="subscribe-form">
+                                    <input type="text" placeholder="Email Address"/>
+                                </form>
+                            </div>
+                        </div>
+                    </div> <!-- .row -->
+
+                    <div class="colophon">Copyright 2018 Filmski festivali, Projekat iz predmeta Programiranje internet aplikacija, Aleksa Lazarevic, ETF Beograd</div>
+                </div> <!-- .container -->
+
+            </footer>
+        </div>
+        <!-- Default snippet for navigation -->
+
+
+<!--        <script src="resources/js/jquery-1.11.1.min.js"></script>
+        <script src="resources/js/plugins.js"></script>
+        <script src="resources/js/app.js"></script>-->
+    </h:body>
+</html>
+

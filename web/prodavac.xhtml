@@ -1,0 +1,167 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+
+        <!--		 Loading third party fonts -->
+        <link href="http://fonts.googleapis.com/css?family=Roboto:300,400,700|" rel="stylesheet" type="text/css"/>
+        <link href="fonts/font-awesome.min.css" rel="stylesheet" type="text/css"/><!--
+
+         Loading main css file 
+        -->		<link rel="stylesheet" href="style.css"/>
+    </h:head>
+    <h:body>
+        <div id="site-content">
+            <header class="site-header">
+                <div class="container">
+                    <a href="index.html" id="branding">
+                        <h:graphicImage value="resources/images/logo.png" alt="" class="logo"/>
+                        <div class="logo-copy">
+                            <h1 class="site-title">Movie festival community</h1>
+                            <small class="site-description">Nadji svoj festival!</small>
+                        </div>
+                    </a> <!-- #branding -->
+
+                    <h:form>
+                        <div class="main-navigation">
+                            <button type="button" class="menu-toggle"><i class="fa fa-bars"></i></button>
+                            <ul class="menu">
+                                <li class="menu-item current-menu-item"><h:commandLink action="prodavac">Početna</h:commandLink></li>
+                                <li class="menu-item"><h:commandLink action="pretragaFestivala">Pretrazi festivale</h:commandLink></li>
+                                <li class="menu-item"><h:commandLink action="promenaLozinke">Promena lozinke</h:commandLink></li>
+                                <li class="menu-item"><a href="joinus.html">Join us</a></li>
+                                <li class="menu-item"><h:commandLink action="#{controller.logout()}">Odjava</h:commandLink></li>
+                            </ul> <!-- .menu -->
+                        </div>
+                    </h:form>
+
+                    <div class="mobile-navigation"></div>
+                </div>
+            </header>
+            <main class="main-content">
+                <div class="container">
+                    <div class="page">
+                        <h2 class="section-title">Spisak podnetih rezervacija:</h2>
+                        <ul class="movie-schedule">
+                            <h:form id="formrez">
+                                <p:dataTable  value="#{controller.dohvatiPodneteRezervacije()}" var="i" resizableColumns="true" 
+                                              paginator="true" rows="3" style="margin-bottom:25px">
+                                    <p:column headerText="Jedinstveni kod">
+                                        <p:outputLabel value="#{i.jedinstveniKod}"/>
+                                    </p:column>
+                                    <p:column headerText="Datum rezervacije">
+                                        <p:outputLabel value="#{i.datumLepo}"/>
+                                    </p:column>
+                                    <p:column headerText="Broj ulaznica">
+                                        <p:outputLabel value="#{i.brojRezervacija}"/>
+                                    </p:column>
+                                    <p:column headerText="Prezime i ime">
+                                        <p:outputLabel value="#{i.prezimeKorisnika} #{i.imeKorisnika}"/>
+                                    </p:column>
+                                    <p:column headerText="POTVRDA">
+                                        <p:commandButton action="#{controller.dohvatiPodatkeRezervacije(i)}" value="POTVRDI" update="formrez" ajax="true"/>
+                                    </p:column> 
+                                    <p:column headerText="ODOBRAVANJE" >
+                                        <p:commandButton update=":rezDlg" value="ODOBRI" type="button" onclick="PF('dlg').show();" ajax="true"/>
+                                    </p:column>                                        
+                                </p:dataTable>
+                                
+                                <p:dialog id="rezDlg" header="Potvrda rezervacije" widgetVar="dlg" modal="true" height="200" width="400">
+                                    <h:form>
+                                        <h:panelGrid columns="2">
+                                            <p:outputLabel value="Festival: "/>
+                                            <p:outputLabel value="#{controller.dialogFestival}"/>
+                                            
+                                            <p:outputLabel value="Film: "/>
+                                            <p:outputLabel value="#{controller.dialogFilm}"/>
+                                            
+                                            <p:outputLabel value="Prezime: "/>
+                                            <p:outputLabel value="#{controller.dialogPrezime}"/>
+
+                                            <p:outputLabel value="Ime: "/>
+                                            <p:outputLabel value="#{controller.dialogIme}"/>
+
+                                            <p:outputLabel value="Cena: "/>
+                                            <p:outputLabel value="#{controller.dialogCena}.00 RSD"/>
+
+                                            <p:outputLabel value="Jedinstveni kod: "/>
+                                            <p:outputLabel value="#{controller.dialogKod}"/>
+                                            <br/><br/>
+                                            <p:commandButton update="formrez" value="ODOBRI" action="#{controller.odobriRezervaciju()}" ajax="true"/>
+                                        </h:panelGrid>
+                                    </h:form>    
+                                </p:dialog>
+                            </h:form>
+                            <p:outputLabel value="Pretraga:" />
+                                <h:form id="pretraga">
+                                    <p:panelGrid columns="2">
+                                        <p:outputLabel value="Jedinstveni kod: "/>
+                                        <p:inputText value="#{controller.filterKod}"/>
+
+                                        <p:outputLabel value="Prezime:"/>
+                                        <p:inputText value="#{controller.filterPrezime}"/>
+
+                                        <p:outputLabel value="Ime: "/>
+                                        <p:inputText value="#{controller.filterIme}"/>
+
+                                    </p:panelGrid><br/>
+                                    <p:commandButton update="formrez" value="PRETRAZI" action="#{controller.pretraziRezervacije()}" ajax="true"/> 
+                                </h:form>
+                            <br/><br/>
+                            <h4 class="section-title">Slobodna prodaja:</h4>
+                            <h:form id="prodaja">
+                                <p:outputLabel style="color: red" value="#{controller.porukaProdaja}"/>
+                                <p:panelGrid columns="2">
+                                    <p:outputLabel value="Projekcija:"/>
+                                    <p:selectOneMenu value="#{controller.izabranaProjekcijaId}">
+                                        <f:selectItems value="#{controller.dohvatiSveProjekcije()}" var="p" itemLabel="#{p}" itemValue="#{p.idProjekcija}"/>
+                                    </p:selectOneMenu>
+                                    
+                                    <p:outputLabel value="Broj ulaznica: "/>
+                                    <p:inputText value="#{controller.brojUlaznicaSlobodnaProdaja}" size="5"/>
+                                </p:panelGrid><br/>
+                                <p:commandButton update="prodaja" value="POTVRDI PRODAJU" action="#{controller.potvrdiProdaju()}" ajax="true"/>
+                            </h:form>
+                            
+                        </ul>
+                    </div>
+                </div> <!-- .container -->
+            </main>
+
+            <footer class="site-footer">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="widget">
+                                <h3 class="widget-title">About Us</h3>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quia tempore vitae mollitia nesciunt saepe cupiditate</p>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="widget">
+                                <h3 class="widget-title">Newsletter</h3>
+                                <form action="#" class="subscribe-form">
+                                    <input type="text" placeholder="Email Address"/>
+                                </form>
+                            </div>
+                        </div>
+                    </div> <!-- .row -->
+
+                    <div class="colophon">Copyright 2018 Filmski festivali, Projekat iz predmeta Programiranje internet aplikacija, Aleksa Lazarevic, ETF Beograd</div>
+                </div> <!-- .container -->
+
+            </footer>
+        </div>
+        <!-- Default snippet for navigation -->
+
+
+        <!--<script src="resources/js/jquery-1.11.1.min.js"></script>-->
+        <script src="resources/js/plugins.js"></script>
+        <script src="resources/js/app.js"></script>
+    </h:body>
+</html>
+

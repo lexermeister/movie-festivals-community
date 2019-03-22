@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jan 21, 2018 2:00:59 AM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="beans.Film" table="film" catalog="festivali" optimistic-lock="version">
+        <id name="idFilm" type="java.lang.Integer">
+            <column name="IdFilm" />
+            <generator class="identity" />
+        </id>
+        <property name="naziv" type="string">
+            <column name="Naziv" length="20" />
+        </property>
+        <property name="originalniNaziv" type="string">
+            <column name="OriginalniNaziv" length="30" />
+        </property>
+        <property name="slikaPoster" type="string">
+            <column name="SlikaPoster" />
+        </property>
+        <property name="reziser" type="string">
+            <column name="Reziser" length="20" />
+        </property>
+        <property name="kratakOpis" type="string">
+            <column name="KratakOpis" length="65535" />
+        </property>
+        <property name="godina" type="string">
+            <column name="Godina" length="10" />
+        </property>
+        <property name="glavniGlumci" type="string">
+            <column name="GlavniGlumci" length="100" />
+        </property>
+        <property name="trajanje" type="string">
+            <column name="Trajanje" length="20" />
+        </property>
+        <property name="zemljaPorekla" type="string">
+            <column name="ZemljaPorekla" length="20" />
+        </property>
+        <property name="linkImdb" type="string">
+            <column name="LinkIMDB" length="16777215" />
+        </property>
+        <property name="linkRotten" type="string">
+            <column name="LinkRotten" length="16777215" />
+        </property>
+        <property name="linkTrailer" type="string">
+            <column name="LinkTrailer" length="16777215" />
+        </property>
+        <property name="rejting" type="double">
+            <column name="Rejting" precision="10" />
+        </property>
+        <property name="brojOcena" type="java.lang.Integer">
+            <column name="BrojOcena" />
+        </property>
+    </class>
+</hibernate-mapping>
